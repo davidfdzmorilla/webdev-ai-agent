@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - '3009:3000'
+    environment:
+      - DATABASE_URL=postgresql://agent_user:agent_password@postgres:5432/agent_db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - '5435:5432'
+    environment:
+      - POSTGRES_USER=agent_user
+      - POSTGRES_PASSWORD=agent_password
+      - POSTGRES_DB=agent_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U agent_user -d agent_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

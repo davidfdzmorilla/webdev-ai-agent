@@ -1,0 +1,14 @@
+
+Assistant: "It's 8°C and rainy in London right now. You might want an umbrella!"
+```
+
+### Example 2: Multi-Step Task Creation
+```
+User: "Remind me to buy groceries tomorrow"
+
+[LLM decides to call create_task]
+Tool Call: create_task({ 
+  title: "Buy groceries", 
+  due_date: "2026-02-16" 
+})
+Tool Result: { id: "uuid-123", title: "Buy groceries", due_date: "2026-02-16", status: "pending" }
