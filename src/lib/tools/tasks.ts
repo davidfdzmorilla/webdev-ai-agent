@@ -50,16 +50,20 @@ export async function listTasks(input: ListTasksInput): Promise<string> {
   const { sessionId, status, limit } = input;
   
   try {
-    let query = db.select().from(tasks).where(eq(tasks.sessionId, sessionId));
+    let taskList;
     
-    if (status !== "all") {
-      query = query.where(and(
-        eq(tasks.sessionId, sessionId),
-        eq(tasks.status, status)
-      )) as any;
+    if (status === "all") {
+      taskList = await db.select().from(tasks)
+        .where(eq(tasks.sessionId, sessionId))
+        .limit(limit);
+    } else {
+      taskList = await db.select().from(tasks)
+        .where(and(
+          eq(tasks.sessionId, sessionId),
+          eq(tasks.status, status)
+        ))
+        .limit(limit);
     }
-    
-    const taskList = await query.limit(limit);
     
     if (taskList.length === 0) {
       return status === "all" 

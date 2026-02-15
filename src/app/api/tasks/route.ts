@@ -17,16 +17,16 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get("status") || "all";
     
-    let query = db.select().from(tasks).where(eq(tasks.sessionId, sessionId));
+    let taskList;
     
-    if (status !== "all") {
-      query = query.where(and(
+    if (status === "all") {
+      taskList = await db.select().from(tasks).where(eq(tasks.sessionId, sessionId));
+    } else {
+      taskList = await db.select().from(tasks).where(and(
         eq(tasks.sessionId, sessionId),
         eq(tasks.status, status as "pending" | "completed")
-      )) as any;
+      ));
     }
-    
-    const taskList = await query;
     
     return NextResponse.json({ tasks: taskList });
   } catch (error) {

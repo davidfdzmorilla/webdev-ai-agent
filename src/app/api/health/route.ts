@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { sql } from "drizzle-orm";
 
 export async function GET() {
   try {
     // Check database connection
-    await db.execute({ sql: "SELECT 1" });
+    await db.execute(sql`SELECT 1`);
     
     // Check OpenAI API key is set
     const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
